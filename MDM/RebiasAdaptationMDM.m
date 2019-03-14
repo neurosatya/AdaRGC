@@ -1,4 +1,4 @@
-function [detected_trial] = RebiasAdaptationMDM(data, AdaptationParameter)
+function [Accuracy] = RebiasAdaptationMDM(data, AdaptationParameter)
 
 % A function to predict the label according to Sequential Rebias strategy
 % proposed in the paper
@@ -19,11 +19,7 @@ function [detected_trial] = RebiasAdaptationMDM(data, AdaptationParameter)
 
 disp('Rebias Adaptation MDM')
 %% Init
-unique_labels=unique(data.labels);
-Nclass=size(unique_labels, 2);
-NTests = size(data.idxTest, 2);
-distances = zeros(NTests, Nclass);	% Preallocation
-detected_trial = zeros(1, NTests);	% Preallocation
+[Nclass, NTests ,distances ,detected_trial ,trueYtest] = InitializeVar(data);
 
 % Compute Reference Rebias
 reference = riemann_mean(data.data(:, :, data.idxTraining)); % Estimation of riemannian mean of training data
@@ -48,6 +44,9 @@ for i=1:NTests
 	% classifiaction
 	[distances(i,:), detected_trial(i)] = Classification(C,Affine_transformed_trial);
 end
+
+Accuracy = 100*numel(find(trueYtest-detected_trial==0))/size(detected_trial,2);
+
 
 %% Displays
 for i=1:Nclass

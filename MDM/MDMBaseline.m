@@ -1,4 +1,4 @@
-function [detected_trial] = MDMBaseline(data)
+function [Accuracy] = MDMBaseline(data)
 
 % A function to predict the label using to MDM classifier
 %
@@ -17,20 +17,18 @@ function [detected_trial] = MDMBaseline(data)
 %
 disp('Baseline MDM');
 %% Init
-unique_labels=unique(data.labels);
-Nclass=size(unique_labels, 2);
-NTests = size(data.idxTest, 2);
-distances = zeros(NTests, Nclass);	% Preallocation
-detected_trial = zeros(1, NTests);	% Preallocation
+[Nclass, NTests ,distances ,detected_trial ,trueYtest] = InitializeVar(data);
 
 [C,~] = ClassPrototypeEstimation(data);	% Estimation of class prototypes
 
 %% Testing
 disp('Testing...')
 for i=1:NTests	
-	% classifiaction	
+	% classification	
 	[distances(i,:), detected_trial(i)] = Classification(C,data.data(:,:,data.idxTest(i)));
 end
+
+Accuracy = 100*numel(find(trueYtest-detected_trial==0))/size(detected_trial,2);
 
 %% Displays
 for i=1:Nclass

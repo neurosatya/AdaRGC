@@ -1,12 +1,12 @@
-function [detected_trial] = UnsupervisedAdaptationMDM(data,AdaptationParameter)
+function [Accuracy] = SupervisedAdaptationMDM(data, AdaptationParameter)
 
-% A function to predict the label according to Unsupervised adaptation of
+% A function to predict the label according to Supervised adaptation of
 % MDM proposed in the paper
 %
 %Input:
 %data: A structure with following fields (In accordance to Barachant toolobox)
 %     data.data: The covariance matrices of each EEG trial as [Nc*NC*Nt]
-%                Nc: Number of Channels Nt: Number of trials                           
+%                Nc: Number of Channels Nt: Number of trials
 %   data.labels: True labels corresponding to each trial | shape: [1*Nt]
 %   data.idxTraining: Indexes corrsponding to training samples in data
 %   data.idxTest: Indexes corresponding to testing samples in data
@@ -17,14 +17,9 @@ function [detected_trial] = UnsupervisedAdaptationMDM(data,AdaptationParameter)
 %   satyamjuve@gmail.com
 %
 
-disp('Unsupervised Adaptation MDM')
-
+disp('Supervised Adaptation MDM');
 %% Init
-unique_labels=unique(data.labels);
-Nclass=size(unique_labels, 2);
-NTests = size(data.idxTest, 2);
-distances = zeros(NTests, Nclass);	% Preallocation
-detected_trial = zeros(1, NTests);	% Preallocation
+[Nclass, NTests ,distances ,detected_trial ,trueYtest] = InitializeVar(data);
 
 [C, Ntrials] = ClassPrototypeEstimation(data);	% Estimation of class prototypes
 
@@ -37,12 +32,14 @@ for i=1:NTests
 	
 	% Updatation of class prototypes as described in the paper
 	if(nargin<2)
-		[C, Ntrials] = UpdateClass(C, Ntrials, detected_trial(i), trial);
+		[C, Ntrials] = UpdateClass(C, Ntrials, trueYtest(i), trial);
 	else
-		[C, Ntrials] = UpdateClass(C, Ntrials, detected_trial(i), trial, AdaptationParameter);
+		[C, Ntrials] = UpdateClass(C, Ntrials, trueYtest(i), trial, AdaptationParameter);
 	end
 
 end
+
+Accuracy = 100*numel(find(trueYtest-detected_trial==0))/size(detected_trial,2);
 
 %% Displays
 for i=1:Nclass

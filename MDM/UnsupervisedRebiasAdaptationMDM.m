@@ -1,4 +1,4 @@
-function [detected_trial] = UnsupervisedRebiasAdaptationMDM(data,AdaptationParameter)
+function [Accuracy] = UnsupervisedRebiasAdaptationMDM(data,AdaptationParameter)
 
 % A function to predict the label according to Sequential Supervised Rebias
 % strategy proposed in the paper
@@ -18,11 +18,7 @@ function [detected_trial] = UnsupervisedRebiasAdaptationMDM(data,AdaptationParam
 %
 disp('Unsupervised Rebias Adaptation MDM');
 %% Init
-unique_labels=unique(data.labels);
-Nclass=size(unique_labels, 2);
-NTests = size(data.idxTest, 2);
-distances = zeros(NTests, Nclass);	% Preallocation
-detected_trial = zeros(1, NTests);	% Preallocation
+[Nclass, NTests ,distances ,detected_trial ,trueYtest] = InitializeVar(data);
 
 % Compute Reference Rebias
 reference=riemann_mean(data.data(:, :, data.idxTraining)); % Estimation of riemannian mean of training data
@@ -49,6 +45,8 @@ for i=1:NTests
 	% Geodesic adaptation to update the class prototypes as described in
 	[C, Ntrials] = UpdateClass(C, Ntrials, detected_trial(i), Affine_transformed_trial);
 end
+
+Accuracy = 100*numel(find(trueYtest-detected_trial==0))/size(detected_trial,2);
 
 %% Displays
 for i=1:Nclass

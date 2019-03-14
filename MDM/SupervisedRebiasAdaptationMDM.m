@@ -1,4 +1,4 @@
-function [detected_trial] = SupervisedRebiasAdaptationMDM(data, AdaptationParameter)
+function [Accuracy] = SupervisedRebiasAdaptationMDM(data, AdaptationParameter)
 
 % A function to predict the label according to Sequential Supervised Rebias
 % strategy proposed in the paper
@@ -19,11 +19,7 @@ function [detected_trial] = SupervisedRebiasAdaptationMDM(data, AdaptationParame
 
 disp('Supervised Rebias Adaptation MDM')
 %% Init
-unique_labels=unique(data.labels);
-Nclass=size(unique_labels, 2);
-NTests = size(data.idxTest, 2);
-distances = zeros(NTests, Nclass);	% Preallocation
-detected_trial = zeros(1, NTests);	% Preallocation
+[Nclass, NTests ,distances ,detected_trial ,trueYtest] = InitializeVar(data);
 
 % Compute Reference Rebias
 reference=riemann_mean(data.data(:, :, data.idxTraining)); % Estimation of riemannian mean of training data
@@ -34,7 +30,6 @@ data.data(:, :, data.idxTraining)=Affine_transformation(data.data(:, :, data.idx
 
 %% Testing
 disp('Testing...')
-trueYtest = data.labels(data.idxTest); % true label of the test data
 for i=1:NTests
 	% Estimation of transformation matrix using geodesic adaptation
 	if(i>1)
@@ -51,6 +46,8 @@ for i=1:NTests
 	% Geodesic adaptation to update the class prototypes as described in
 	[C, Ntrials] = UpdateClass(C, Ntrials, trueYtest(i), Affine_transformed_trial);
 end
+
+Accuracy = 100*numel(find(trueYtest-detected_trial==0))/size(detected_trial,2);
 
 %% Displays
 for i=1:Nclass
