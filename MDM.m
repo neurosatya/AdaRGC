@@ -5,7 +5,7 @@ if (nargin<2)||(isempty(type))
 	type = 'normal';
 end
 if (nargin<3)
-	display = 0;
+	display = false;
 end
 
 %% Switch type
@@ -52,7 +52,7 @@ if (Rebias)
 	data.data(:, :, data.idxTraining)=Affine_transformation(data.data(:, :, data.idxTraining), reference);
 end
 
-[C,Ntrials] = ClassPrototypeEstimation(data);	% Estimation of class prototypes
+[C,Ntrials] = Class_MDM_Prototype_Estimation(data);	% Estimation of class prototypes
 
 %% Testing
 if display

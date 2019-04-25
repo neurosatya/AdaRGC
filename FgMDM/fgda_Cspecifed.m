@@ -29,7 +29,7 @@ end
 S=mean(Covclass,3);
 
 
-[W Lambda] = eig(Sb,S);
+[W, Lambda] = eig(Sb,S);
 [~, Index] = sort(diag(Lambda),'descend');
 
 W = W(:,Index);

@@ -35,31 +35,31 @@ training_labels = data.labels(data.idxTraining);
 %% Testing
 disp('Testing...')
 for i=1:NTests
-	Current_trial=data.data(:,:,data.idxTest(i));
-	Geodesic_transformed_trial = geodesic_filter(Current_trial,Cg,W(:,1:Nclass-1));
-
+	trial=data.data(:,:,data.idxTest(i));
+	Transformed_trial = geodesic_filter(trial,Cg,W(:,1:Nclass-1));
+	
 	% distance_calculation from geodesically filtered class prototypes
 	for class=1:Nclass
-		distances(i,class) = distance_riemann(Geodesic_transformed_trial,C{class});
+		distances(i,class) = distance_riemann(Transformed_trial,C{class});
 	end
 	[~,detected_trial(i)]=min(distances(i,:));
 	
-	% classification	
+	% classification
 	%[distances(i,:), detected_trial(i)] = Classification(C,Geodesic_transformed_trial);
-
+	
 	% update the training set with current class trial
-	training_set = cat(3,training_set,Current_trial);
+	training_set = cat(3,training_set,trial);
 	training_labels = [training_labels,trueYtest(i)];
 	% Updating the class specific chunks with current trial in a supervised adaptation framework
-	cov_org{trueYtest(i)}=cat(3,cov_org{trueYtest(i)},Current_trial);
-
+	cov_org{trueYtest(i)}=cat(3,cov_org{trueYtest(i)},trial);
+	
 	% Geodesic interpolation of the Barycentre of all the trials :
 	% train_set+incoming trial
 	if(nargin<2)
 		AdaptationParameter = 1/(size(training_set,3));
 	end
-	Cg=riemann_geodesic(Cg,Current_trial,AdaptationParameter);
-
+	Cg=riemann_geodesic(Cg,trial,AdaptationParameter);
+	
 	clear W C  % removing the past filter matrix and class prototypes
 	
 	[W] = fgda_Cspecifed(training_set,training_labels,Cg,'shcov',{});
@@ -70,6 +70,7 @@ for i=1:NTests
 		cov{class} = geodesic_filter(cov_org{class},Cg,W(:,1:Nclass-1));
 		C{class}=riemann_mean(cov{class});
 	end
+
 end
 
 Accuracy = 100*numel(find(trueYtest-detected_trial==0))/size(detected_trial,2);

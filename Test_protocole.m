@@ -29,11 +29,11 @@ data = protocol_data;
 
 %% FgMDM
 data = protocol_data;
-FgMDM_acc				= FgMDMBaseline(data);
+[FgMDM_acc, FgMDM_dect, FgMDM_dist]			= FgMDM(data, 'normal', true);
 data = protocol_data;
-FgMDM_acc_S			= SupervisedAdaptationFgMDM(data);
+[FgMDM_acc_S, FgMDM_dect_S, FgMDM_dist_S]	= FgMDM(data, 'Supervised', true);
 data = protocol_data;
-FgMDM_acc_U			= UnSupervisedAdaptationFgMDM(data);
+[FgMDM_acc_U, FgMDM_dect_U, FgMDM_dist_U]	= FgMDM(data, 'Unsupervised', true);
 % data = protocol_data;
 % FgMDM_acc_R			= RebiasAdaptationFgMDM(data);
 % data = protocol_data;
@@ -43,9 +43,9 @@ FgMDM_acc_U			= UnSupervisedAdaptationFgMDM(data);
 
 format(initformat);
 
-c = categorical({'MDM','FgMDM'});
-y = [MDM_acc MDM_acc_S MDM_acc_U MDM_acc_R MDM_acc_R_S MDM_acc_R_U; FgMDM_acc FgMDM_acc_S FgMDM_acc_U FgMDM_acc FgMDM_acc FgMDM_acc];
-bar(c,y);
+%c = categorical({'MDM','FgMDM'});
+%y = [MDM_acc MDM_acc_S MDM_acc_U MDM_acc_R MDM_acc_R_S MDM_acc_R_U; FgMDM_acc FgMDM_acc_S FgMDM_acc_U FgMDM_acc FgMDM_acc FgMDM_acc];
+%bar(c,y);
 
 
 
