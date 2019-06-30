@@ -7,10 +7,13 @@ addpath('Misc')
 initformat = get(0,'format');
 format('long');
 
-load('protocol_data.mat')
+load('protocol_data1.mat')
+
+% protocol_data=data;
 
 trueYtest  = protocol_data.labels(protocol_data.idxTest);
 
+% trueYtest=trueYtest';
 
 %% MDM
 data = protocol_data;
@@ -31,9 +34,11 @@ data = protocol_data;
 data = protocol_data;
 [FgMDM_acc, FgMDM_dect, FgMDM_dist]			= FgMDM(data, 'normal', true);
 data = protocol_data;
-[FgMDM_acc_S, FgMDM_dect_S, FgMDM_dist_S]	= FgMDM(data, 'Supervised', true);
-data = protocol_data;
-[FgMDM_acc_U, FgMDM_dect_U, FgMDM_dist_U]	= FgMDM(data, 'Unsupervised', true);
+[FgMDM_acc_R, FgMDM_dect_R, FgMDM_dist_R]			= FgMDM(data, 'Rebias', true);
+% data = protocol_data;
+% [FgMDM_acc_S, FgMDM_dect_S, FgMDM_dist_S]	= FgMDM(data, 'Supervised', true);
+% data = protocol_data;
+% [FgMDM_acc_U, FgMDM_dect_U, FgMDM_dist_U]	= FgMDM(data, 'Unsupervised', true);
 % data = protocol_data;
 % FgMDM_acc_R			= RebiasAdaptationFgMDM(data);
 % data = protocol_data;

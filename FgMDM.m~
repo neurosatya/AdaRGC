@@ -24,7 +24,7 @@ if display
 		case 'Unsupervised'
 			disp('Unsupervised Adaptation FgMDM');
 		otherwise
-			disp('Unknown Method classical used');
+			disp('Unkknown Method classical used');
 			type = 'normal';
 	end
 end
@@ -50,19 +50,12 @@ training_set = data.data(:,:,data.idxTraining);
 training_labels = data.labels(data.idxTraining);
 
 
-if (Rebias)
-	% Compute Reference Rebias
-	reference=riemann_mean(data.data(:, :, data.idxTraining)); % Estimation of riemannian mean of training data
-    % Shifting the training covariance matrices
-	training_set=Affine_transformation(data.data(:, :, data.idxTraining), reference);
-%     disp(riemann_mean(data.data(:, :, data.idxTraining)));
-end
+
 
 
 
 [W, Cg, C, Ntrials] = Class_FgMDM_Prototype_Estimation(training_set, training_labels);
 
-% disp(Cg)
 %% Testing
 if display
 	disp('Testing...')
@@ -70,13 +63,6 @@ end
 
 for i=1:NTests
 	trial=data.data(:,:,data.idxTest(i));
-	if(Rebias)
-		if(i>1)
-			reference = UpdateRebias(i, data.data(:, :, data.idxTest(i-1)), reference);
-		end
-		% Affine transformation of the trial
-		trial = Affine_transformation(trial, reference);
-	end    
 	Transformed_trial = geodesic_filter(trial,Cg,W(:,1:Nclass-1));
 	% Classification
 	[Distances(i,:), Detected(i)] = Classification(C,Transformed_trial);
@@ -91,25 +77,25 @@ for i=1:NTests
 end
 
 Accuracy = 100*numel(find(trueYtest-Detected==0))/size(Detected,2);
-% %% Displays
-% if display
-% 	disp('Reference Matrix');
-% 	disp(Cg);
-% 	disp('LDA Weight');
-% 	disp(W);	
-% 	for i=1:Nclass
-% 		disp(strcat('Class ',int2str(i)));
-% 		disp(C{i});
-% 	end
-% 	disp('Detected Trials');
-% 	disp(Detected);
-% 	disp('Distances');
-% 	disp(Distances);
-% 	if (Rebias)
-% 		disp('Rebias Final')
-% 		disp(reference)
-% 	end
-% end
+%% Displays
+if display
+	disp('Reference Matrix');
+	disp(Cg);
+	disp('LDA Weight');
+	disp(W);	
+	for i=1:Nclass
+		disp(strcat('Class ',int2str(i)));
+		disp(C{i});
+	end
+	disp('Detected Trials');
+	disp(Detected);
+	disp('Distances');
+	disp(Distances);
+	if (Rebias)
+		disp('Rebias Final')
+		disp(reference)
+	end
+end
 end
 %
 % Rebias = false;
