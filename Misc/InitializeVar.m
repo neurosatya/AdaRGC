@@ -1,6 +1,7 @@
 function [Nclass, NTests ,distances ,detected_trial ,trueYtest] = InitializeVar(data)
-%INITIALIZEVAR Summary of this function goes here
-%   Detailed explanation goes here
+% This function is used for copying the different field in the strucuture
+% of the data to corresponding outputs. See the code below for self
+% explanation
 unique_labels=unique(data.labels);
 Nclass=size(unique_labels, 2);
 NTests = size(data.idxTest, 2);

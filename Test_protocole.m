@@ -1,7 +1,7 @@
 %% Intialize data
 clear all
-addpath('MDM')
-addpath('FgMDM')
+% addpath('MDM')
+% addpath('FgMDM')
 addpath('Misc')
 
 initformat = get(0,'format');

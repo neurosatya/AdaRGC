@@ -1,6 +1,18 @@
 function [C, Ntrials] = Class_MDM_Prototype_Estimation(data)
-%CLASSPROTOTYPEESTIMATION Summary of this function goes here
-%   Detailed explanation goes here
+% This function is used to estimate the different parameters for MDM
+% classifier
+% Input:
+% data: A structure with following fields 
+%   data.data: The covariance matrices of each EEG trial as [Nc*NC*Nt]
+%              Nc: Number of Channels Nt: Number of trials                           
+%   data.labels: True labels corresponding to each trial | shape: [1*Nt]
+%   data.idxTraining: Indexes corrsponding to training samples in data|
+%                     shape [1*Ntraining]
+%   data.idxTest: Indexes corresponding to testing samples in data |
+%                     shape [1*Ntesting]
+% Output:
+% C: Class prototypes corresponding to each class
+% Ntrials: number of trials corresponding to each class
 unique_labels=unique(data.labels);
 Nclass=size(unique_labels, 2);
 Ntrials = zeros(1, Nclass);

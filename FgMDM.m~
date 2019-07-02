@@ -1,4 +1,19 @@
 function [Accuracy, Detected, Distances] = FgMDM(data, type, display)
+% This function is used to compute the the classification performance using
+% different adaptation schemes in FgMDM classifier. Moreover it also
+% predicts the labels of detected class as well as riemannian distances
+% from class prototypes at every stage of adaptation
+% Input:
+% data: A structure with following fields 
+%   data.data: The covariance matrices of each EEG trial as [Nc*NC*Nt]
+%              Nc: Number of Channels Nt: Number of trials                           
+%   data.labels: True labels corresponding to each trial | shape: [1*Nt]
+%   data.idxTraining: Indexes corrsponding to training samples in data|
+%                     shape [1*Ntraining]
+%   data.idxTest: Indexes corresponding to testing samples in data |
+%                     shape [1*Ntesting]
+% type: A string | Name of different adaptation schemes, pick one of the
+%       following:
 
 %% Argument
 if (nargin<2)||(isempty(type))
@@ -24,7 +39,7 @@ if display
 		case 'Unsupervised'
 			disp('Unsupervised Adaptation FgMDM');
 		otherwise
-			disp('Unkknown Method classical used');
+			disp('Unknown Method classical used');
 			type = 'normal';
 	end
 end
@@ -50,12 +65,19 @@ training_set = data.data(:,:,data.idxTraining);
 training_labels = data.labels(data.idxTraining);
 
 
-
+if (Rebias)
+	% Compute Reference Rebias
+	reference=riemann_mean(data.data(:, :, data.idxTraining)); % Estimation of riemannian mean of training data
+    % Shifting the training covariance matrices
+	training_set=Affine_transformation(data.data(:, :, data.idxTraining), reference);
+%     disp(riemann_mean(data.data(:, :, data.idxTraining)));
+end
 
 
 
 [W, Cg, C, Ntrials] = Class_FgMDM_Prototype_Estimation(training_set, training_labels);
 
+% disp(Cg)
 %% Testing
 if display
 	disp('Testing...')
@@ -63,6 +85,13 @@ end
 
 for i=1:NTests
 	trial=data.data(:,:,data.idxTest(i));
+	if(Rebias)
+		if(i>1)
+			reference = UpdateRebias(i, data.data(:, :, data.idxTest(i-1)), reference);
+		end
+		% Affine transformation of the trial
+		trial = Affine_transformation(trial, reference);
+	end    
 	Transformed_trial = geodesic_filter(trial,Cg,W(:,1:Nclass-1));
 	% Classification
 	[Distances(i,:), Detected(i)] = Classification(C,Transformed_trial);
@@ -77,25 +106,25 @@ for i=1:NTests
 end
 
 Accuracy = 100*numel(find(trueYtest-Detected==0))/size(Detected,2);
-%% Displays
-if display
-	disp('Reference Matrix');
-	disp(Cg);
-	disp('LDA Weight');
-	disp(W);	
-	for i=1:Nclass
-		disp(strcat('Class ',int2str(i)));
-		disp(C{i});
-	end
-	disp('Detected Trials');
-	disp(Detected);
-	disp('Distances');
-	disp(Distances);
-	if (Rebias)
-		disp('Rebias Final')
-		disp(reference)
-	end
-end
+% %% Displays
+% if display
+% 	disp('Reference Matrix');
+% 	disp(Cg);
+% 	disp('LDA Weight');
+% 	disp(W);	
+% 	for i=1:Nclass
+% 		disp(strcat('Class ',int2str(i)));
+% 		disp(C{i});
+% 	end
+% 	disp('Detected Trials');
+% 	disp(Detected);
+% 	disp('Distances');
+% 	disp(Distances);
+% 	if (Rebias)
+% 		disp('Rebias Final')
+% 		disp(reference)
+% 	end
+% end
 end
 %
 % Rebias = false;

@@ -1,4 +1,28 @@
 function [Accuracy, Detected, Distances] = FgMDM(data, type, display)
+% This function is used to compute the the classification performance using
+% different adaptation schemes in FgMDM classifier. Moreover it also
+% predicts the labels of detected class as well as riemannian distances
+% from class prototypes at every stage of adaptation
+% Input:
+% data: A structure with following fields 
+%   data.data: The covariance matrices of each EEG trial as [Nc*NC*Nt]
+%              Nc: Number of Channels Nt: Number of trials                           
+%   data.labels: True labels corresponding to each trial | shape: [1*Nt]
+%   data.idxTraining: Indexes corrsponding to training samples in data|
+%                     shape [1*Ntraining]
+%   data.idxTest: Indexes corresponding to testing samples in data |
+%                     shape [1*Ntesting]
+% type: A string | Name of different adaptation schemes, pick one of the
+%       following:
+%       * 'normal'
+%       * 'Rebias'
+%       * 'Supervised Rebias'
+%       * 'Unsupervised Rebias'
+%       * 'Supervised'
+%       * 'Unsupervised'
+%
+% display: logging the different outputs | Options , True or False
+
 
 %% Argument
 if (nargin<2)||(isempty(type))
