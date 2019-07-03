@@ -14,3 +14,5 @@ Note that the proposed approaches can also be used for adapatation in across sub
 #### Toolboxes we use
 
 1. [Covariance Toolbox](https://github.com/alexandrebarachant/covariancetoolbox)
+
+I would like to thank [Thibaut monseigne](https://tmonseigne.github.io/) for structuring the codes really nicely, Thanks Thibaut!
