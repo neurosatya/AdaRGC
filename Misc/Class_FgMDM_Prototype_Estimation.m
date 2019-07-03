@@ -4,7 +4,7 @@ function [W, Cg, C, Ntrials] = Class_FgMDM_Prototype_Estimation(training_set, tr
 % Input:
 % training_set: The covariance matrices of each trial as [Nc*NC*Nt]
 %              Nc: Number of Channels Nt: Number of trials 
-% testing_set: The corresponding labels of covariance matrices present in training set
+% training_labels: The corresponding labels of covariance matrices present in training set
 %              shape [1*Nt] 
 % Output:
 % W: Geodesic filters which is estimated after discriminant analysis in
