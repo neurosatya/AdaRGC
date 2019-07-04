@@ -19,6 +19,7 @@ function [C, Ntrials] = UpdateClass(C,Ntrials,id,sample, AdaptationParameter)
 % Classification using Riemannian Geometry approaches in Brain-Computer Interfaces. 
 % In IEEE International Winter Conference on Brain-Computer Interfaces.
 
+
 	Ntrials(id) = Ntrials(id) + 1;
 	if(nargin<5)
 		AdaptationParameter = 1/Ntrials(id);

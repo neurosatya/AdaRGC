@@ -22,7 +22,8 @@ function [W, C, Cg, Ntrials, training_set, training_labels] = UpdateFgMDMClass(C
 
 
 
-
+% Note: Used for complete adaptation in Supervised, unsupervised FgMDM
+% adaptation. 
 
 
 unique_labels=unique(training_labels);

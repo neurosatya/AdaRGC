@@ -13,6 +13,9 @@ function [C, Ntrials] = Class_MDM_Prototype_Estimation(data)
 % Output:
 % C: Class prototypes corresponding to each class
 % Ntrials: number of trials corresponding to each class
+
+% Note: This script is used in MDM classifiers
+
 unique_labels=unique(data.labels);
 Nclass=size(unique_labels, 2);
 Ntrials = zeros(1, Nclass);

@@ -10,6 +10,8 @@ function [distances,detected_trial] = Classification(Classes,sample)
 % distances: The riemannian distances from each class prototype 
 %            | shape array [1*N_classes]
 % detected_trial : label of the detected trial
+
+% Note: This script is used for classification using riemannian distances
 distances = zeros(1,max(size(Classes)));
 for i=1:max(size(Classes))
 	distances(i) = distance_riemann(sample, Classes{i});

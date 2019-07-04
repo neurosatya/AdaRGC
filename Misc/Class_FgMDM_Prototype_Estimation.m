@@ -13,6 +13,9 @@ function [W, Cg, C, Ntrials] = Class_FgMDM_Prototype_Estimation(training_set, tr
 % C: Class prototypes after geodesic filtering corresponding to each class
 % Ntrials: number of trials corresponding to each class
 
+% Note: This script is used in FgMDM classifiers
+
+
 unique_labels=unique(training_labels);
 Nclass=size(unique_labels, 2);
 Ntrials = zeros(1, Nclass);
