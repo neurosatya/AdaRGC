@@ -79,14 +79,12 @@ if (Rebias)
 	reference=riemann_mean(data.data(:, :, data.idxTraining)); % Estimation of riemannian mean of training data
     % Shifting the training covariance matrices
 	training_set=Affine_transformation(data.data(:, :, data.idxTraining), reference);
-%     disp(riemann_mean(data.data(:, :, data.idxTraining)));
 end
 
 
 
 [W, Cg, C, Ntrials] = Class_FgMDM_Prototype_Estimation(training_set, training_labels);
 
-% disp(Cg)
 %% Testing
 if display
 	disp('Testing...')
@@ -115,70 +113,23 @@ for i=1:NTests
 end
 
 Accuracy = 100*numel(find(trueYtest-Detected==0))/size(Detected,2);
-% %% Displays
-% if display
-% 	disp('Reference Matrix');
-% 	disp(Cg);
-% 	disp('LDA Weight');
-% 	disp(W);	
-% 	for i=1:Nclass
-% 		disp(strcat('Class ',int2str(i)));
-% 		disp(C{i});
-% 	end
-% 	disp('Detected Trials');
-% 	disp(Detected);
-% 	disp('Distances');
-% 	disp(Distances);
-% 	if (Rebias)
-% 		disp('Rebias Final')
-% 		disp(reference)
-% 	end
-% end
+%% Displays
+if display
+	disp('Reference Matrix');
+	disp(Cg);
+	disp('LDA Weight');
+	disp(W);	
+	for i=1:Nclass
+		disp(strcat('Class ',int2str(i)));
+		disp(C{i});
+	end
+	disp('Detected Trials');
+	disp(Detected);
+	disp('Distances');
+	disp(Distances);
+	if (Rebias)
+		disp('Rebias Final')
+		disp(reference)
+	end
 end
-%
-% Rebias = false;
-% Supervised = false;
-% Unsupervised = false;
-% if (strcmp(type, 'Rebias') || strcmp(type, 'Supervised Rebias') || strcmp(type, 'Unsupervised Rebias'))
-% 	Rebias = true;
-% end
-% if (strcmp(type, 'Supervised Rebias') || strcmp(type, 'Supervised'))
-% 	Supervised = true;
-% end
-% if (strcmp(type, 'Unsupervised Rebias') || strcmp(type, 'Unsupervised'))
-% 	Unsupervised = true;
-% end
-%
-% if (Rebias)
-% 	% Compute Reference Rebias
-% 	reference=riemann_mean(data.data(:, :, data.idxTraining)); % Estimation of riemannian mean of training data
-% 	% Shifting the training covariance matrices
-% 	data.data(:, :, data.idxTraining)=Affine_transformation(data.data(:, :, data.idxTraining), reference);
-% end
-%
-% [C,Ntrials] = ClassPrototypeEstimation(data);	% Estimation of class prototypes
-%
-% %% Testing
-% for i=1:NTests
-% 	trial=data.data(:,:,data.idxTest(i));
-%
-% 	% Estimation of transformation matrix using geodesic adaptation
-% 	if(Rebias)
-% 		if(i>1)
-% 			reference = UpdateRebias(i, data.data(:, :, data.idxTest(i-1)), reference);
-% 		end
-% 		% Affine transformation of the trial
-% 		trial = Affine_transformation(trial, reference);
-% 	end
-%
-% 	% Classification
-% 	[Distances(i,:), Detected(i)] = Classification(C,trial);
-%
-% 	% Udpade
-% 	if (Supervised)
-% 		[C, Ntrials] = UpdateClass(C, Ntrials, trueYtest(i), trial);
-% 	elseif (Unsupervised)
-% 		[C, Ntrials] = UpdateClass(C, Ntrials, Detected(i), trial);
-% 	end
-% end
-%
+end
